@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main %}
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col">
+            {% load crispy_forms_tags %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                {{ phone|crispy }}
+                {{ image|crispy }}
+                <input type="submit" value="Gonder">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
