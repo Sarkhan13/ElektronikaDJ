@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 
@@ -27,6 +28,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     category = models.ForeignKey(Category, on_delete=models.CASCADE,verbose_name='Kateqoriyası')
     name = models.CharField(max_length=100, verbose_name='Məhsulun adı')
     price = models.FloatField(verbose_name='Qiyməti')
@@ -50,7 +52,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-    
+    @property
     def get_url(self):
         return reverse('detail', kwargs={'id':self.id})
     

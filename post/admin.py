@@ -14,7 +14,7 @@ class note_inline(admin.StackedInline):
     extra = 0
 
 class prod_inline(admin.ModelAdmin):
-    list_display=('name','price','date')
+    list_display=('name','price','date','user')
     inlines = [phone_inline,note_inline, photo_inline]
     
 
