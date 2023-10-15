@@ -1,13 +1,73 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import *
-from .forms import Elan_form
+from .forms import Elan_form,LoginForm,RegisterForm
 from django.forms import modelform_factory,modelformset_factory
 from django.contrib import messages
 from django.http import Http404
+from django.contrib.auth.models import User
+from django.contrib.auth import login,authenticate,logout
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect(homepage)
+    
+
+    form = RegisterForm(request.POST or None)
+
+    if form.is_valid():
+        user = form.save(commit=False)
+        password = form.cleaned_data['password']
+        user.set_password(password)
+        user.save()
+
+        new_user = authenticate(username = form.cleaned_data['username'],password = form.cleaned_data['password'])
+        login(request, new_user)
+        return redirect(homepage)
+    
+    data = {
+        'form':form
+    }
+
+    return render(request, 'logreg.html',data)
+
+
+
+
+def loginpage(request):
+    if request.user.is_authenticated:
+        return redirect(homepage)
+    
+
+    form = LoginForm(request.POST or None)
+
+    if form.is_valid():
+        user = authenticate(username = form.cleaned_data['username'], password = form.cleaned_data['password'])
+
+        if user:
+            login(request, user)
+            return redirect(homepage)
+        
+        else:
+            messages.error(request, 'İstifadəçi adı və ya şifrə yanlışdır. ')
+
+    contex = {
+        'form': form
+    }
+
+    return render(request, 'logreg.html', contex)
+
+
+
+
+
 
 # post create Telefon
 
 def post_create_phone(request):
+    if not request.user.is_authenticated:
+        return redirect(homepage)
+    
+
     form = Elan_form()
     Imageformset = modelformset_factory(images, fields=('image',), extra=3,min_num=2)
     Phoneform = modelform_factory(Phone, fields=('display','main_cam','add_cam','battery','memory','ram','color','network','biometric'))
@@ -56,6 +116,10 @@ def post_create_phone(request):
 # post create Notebook
 
 def post_create_note(request):
+    if not request.user.is_authenticated:
+        return redirect(homepage)
+      
+
     form = Elan_form()
     Imagesformset = modelformset_factory(images, fields=('image',), extra=3, min_num=2)
     Noteform = modelform_factory(Notebook, fields=('memory','ram','speed','processor','color'))
@@ -117,16 +181,11 @@ def post_update_phone(request, id):
     phoneformod = Phoneform(request.POST or None, instance=prodphone)
 
     if form.is_valid()  and phoneformod.is_valid():
-            post = form.save(commit=False)
-            post.category = Category.objects.get(id = 1)
+        form.save()
+        phoneformod.save()
             
-            post.save()
 
-            
-            phone = Phone(product=post,display = phoneformod.cleaned_data['display'],main_cam = phoneformod.cleaned_data['main_cam'], add_cam = phoneformod.cleaned_data['add_cam'],battery =phoneformod.cleaned_data['battery'], biometric = phoneformod.cleaned_data['biometric'],memory = phoneformod.cleaned_data['memory'], ram =  phoneformod.cleaned_data['ram'],network =  phoneformod.cleaned_data['network'],color =  phoneformod.cleaned_data['color'] )
-            phone.save()
-
-            return redirect(post.get_url)
+        return redirect(post.get_url)
     
     contex = {
         'form':form,

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main %}
+
+{% load crispy_forms_tags %}
+
+<form method="POST" style="width: 400px; margin: auto;">
+    {% csrf_token %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger">
+        <strong>{{ message }}</strong>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    {{ form|crispy }}
+
+    <input type="submit" value="Giriş et">
+</form>
+
+{% endblock %}

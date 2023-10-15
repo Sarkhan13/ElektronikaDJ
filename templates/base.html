@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>MultiShop - Online Shop Website Template</title>
+    <title>{{ request.user }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
@@ -97,9 +97,14 @@
             </div>
             <div class="col-lg-4 col-6 text-right">
                 <!-- Button trigger modal -->
+                {% if user.is_authenticated %}
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
     Elan yerləşdir
   </button>
+  {% else %}
+  <a href="{% url 'login' %}">Giriş et</a>
+  <a href="{% url 'register' %}">Qeydiyyat</a>
+  {%  endif %}
   
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

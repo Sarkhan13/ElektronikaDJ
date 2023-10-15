@@ -14,5 +14,6 @@ urlpatterns = [
     path('note/add/',post_create_note,name='noteadd'),
     path('phone/<int:id>/update', post_update_phone, name='phoneupdate'),
     path('post/<int:id>/delete', post_delete, name='postdelete'),
-
+    path('login/',loginpage, name='login'),
+    path('register/',register, name='register'),
 ]

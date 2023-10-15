@@ -57,10 +57,12 @@
                     <span style="font-size: 14px;"><del>{{ product.price }}</del>₼</span>
                     <h2 class="font-weight-semi-bold mb-4">{{ product.dis_price }}₼</h2>
                     <p class="mb-4">{{ product.about|truncatechars:200 }}</p>
+                    {% if request.user == product.user %}
                     <p>
                         <a href="{% url 'phoneupdate' product.id %}" style="color: blue;">Elanı dəyiş</a><br>
                         <a href="{% url 'postdelete' product.id %}" style="color: red;">Elanı sil</a>
                     </p>
+                    {% endif %}
                     
                     <div class="d-flex mb-4">
                         <strong class="text-dark mr-3">Colors:</strong>
