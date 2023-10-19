@@ -57,6 +57,9 @@
                     <span style="font-size: 14px;"><del>{{ product.price }}</del>₼</span>
                     <h2 class="font-weight-semi-bold mb-4">{{ product.dis_price }}₼</h2>
                     <p class="mb-4">{{ product.about|truncatechars:200 }}</p>
+                    <p>
+                        <span>Baxış sayı:</span>{{ product.views }}
+                    </p>
                     {% if request.user == product.user %}
                     <p>
                         <a href="{% url 'phoneupdate' product.id %}" style="color: blue;">Elanı dəyiş</a><br>

@@ -14,12 +14,13 @@ class note_inline(admin.StackedInline):
     extra = 0
 
 class prod_inline(admin.ModelAdmin):
-    list_display=('name','price','date','user')
+    list_display=('name','price','date','user', 'views')
     inlines = [phone_inline,note_inline, photo_inline]
     
 
 
 admin.site.register(Category)
+admin.site.register(Subuser)
 
 admin.site.register(Product,prod_inline)
 admin.site.register(Phone)

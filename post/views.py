@@ -7,6 +7,23 @@ from django.http import Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import login,authenticate,logout
 
+def is_valid_query(query):
+    return query != "" and query is not None
+
+def searching(request):
+    product = Product.objects.all()
+    searchdata = request.GET['query']
+
+    if is_valid_query(searchdata):
+        product = product.filter(name__contains = searchdata)
+
+    contex = {
+        'product':product,
+        'search': searchdata
+    }
+
+    return render(request, 'result.html', contex)
+
 def register(request):
     if request.user.is_authenticated:
         return redirect(homepage)
@@ -56,6 +73,16 @@ def loginpage(request):
 
     return render(request, 'logreg.html', contex)
 
+
+
+def profile(request, username):
+    userprofile = User.objects.get(username=username)
+
+    contex = {
+        'user': userprofile
+    }
+
+    return render(request, 'profile.html',contex)
 
 
 
@@ -206,14 +233,14 @@ def post_delete(request, id):
 
     return redirect(homepage)
 
-    
+ 
 
 
 def homepage(request):
     category = Category.objects.exclude(id=1)
     cat1 = Category.objects.get(id=1)
     categories = Category.objects.all()
-    product = Product.objects.all().order_by('-date')
+    product = Product.objects.all().order_by('-views')
     phonecount = Product.objects.filter(category__name='Telefonlar').count()
 
     special = specialshop.objects.all()
@@ -242,6 +269,7 @@ def checkpage(request):
 def contactpage(request):
     return render(request,'contact.html')
 
+from django.db.models import F 
 
 def detailpage(request,id):
 
@@ -252,6 +280,7 @@ def detailpage(request,id):
 
     add_prod = Product.objects.filter(name__contains=name[0])
 
+    Product.objects.filter(id=id).update(views= F('views')+1)
     
     
 

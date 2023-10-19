@@ -14,6 +14,21 @@ class specialshop(models.Model):
         return self.title
 
 
+class Subuser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,verbose_name='Istifadəçi')
+    image = models.ImageField(upload_to='profil/')
+    phone = models.CharField(max_length=10)
+    adres = models.CharField(max_length=100)
+    about = models.TextField(verbose_name='Haqqında')
+    TYPE = (
+        ('Fərdi', 'Fərdi'),
+        ('Mağaza', 'Mağaza'),
+        ('Şirkət', 'Şirkət')
+    )
+    usertype = models.CharField(max_length=50, verbose_name='Istifadəçinin tipi',choices=TYPE)
+
+    def __str__(self):
+        return str(self.user)
 
 
 class Category(models.Model):
@@ -39,6 +54,7 @@ class Product(models.Model):
     rating = models.FloatField(verbose_name='Reytinq',default=5)
     
     date = models.DateTimeField(auto_now_add=True)
+    views = models.IntegerField(default=0,blank=True, null=True)
 
     @property
     def dis_price(self):

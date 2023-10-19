@@ -16,4 +16,6 @@ urlpatterns = [
     path('post/<int:id>/delete', post_delete, name='postdelete'),
     path('login/',loginpage, name='login'),
     path('register/',register, name='register'),
+    path('post/search', searching, name='search'),
+    path('profile/<str:username>', profile, name='profile'),
 ]
