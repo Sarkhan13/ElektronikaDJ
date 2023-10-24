@@ -7,22 +7,50 @@ from django.http import Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import login,authenticate,logout
 
+
+def logoutpage(request):
+    logout(request)
+    return redirect(homepage)
+
 def is_valid_query(query):
     return query != "" and query is not None
 
+from django.db.models import Q
+
 def searching(request):
     product = Product.objects.all()
-    searchdata = request.GET['query']
+    searchdata = request.GET.get('query')
+    price_bet = request.GET.get('price_between')
 
     if is_valid_query(searchdata):
         product = product.filter(name__contains = searchdata)
+
+    if is_valid_query(price_bet):
+        if price_bet == 'allprice':
+            product = product
+
+        elif price_bet == 'max100':
+            product = product.filter(price__lte = 100)
+
+        elif price_bet == 'max200':
+            product = product.filter(Q(price__gte=100) & Q(price__lte = 200))
+
+        elif price_bet == 'max300':
+            product = product.filter(Q(price__gte=200) & Q(price__lte = 300))
+
+        elif price_bet == 'max400':
+            product = product.filter(Q(price__gte=300) & Q(price__lte = 400))
+
+        elif price_bet == 'max500':
+            product = product.filter(Q(price__gte=400) & Q(price__lte = 500))
+
 
     contex = {
         'product':product,
         'search': searchdata
     }
 
-    return render(request, 'result.html', contex)
+    return render(request, 'shop.html', contex)
 
 def register(request):
     if request.user.is_authenticated:
@@ -202,25 +230,42 @@ def post_update_phone(request, id):
     prodphone = Phone.objects.get(product=post)
 
     Phoneform = modelform_factory(Phone, fields=('display','main_cam','add_cam','battery','memory','ram','color','network','biometric'))
-    
+    Imageformset = modelformset_factory(images, fields=('image',), extra=3,min_num=0)  
     form = Elan_form(request.POST or None, request.FILES or None, instance=post)
-        
+    
     phoneformod = Phoneform(request.POST or None, instance=prodphone)
+
+    imageformvar = Imageformset(request.POST or None,request.FILES or None, queryset=images.objects.none())
 
     if form.is_valid()  and phoneformod.is_valid():
         form.save()
         phoneformod.save()
+
+        for image in post.images_set.all():
+            image.image = request.FILES.get(f'image_{image.id}',image.image)
+            image.save()
+
+        if imageformvar.is_valid():
             
+            for i in imageformvar:
+                try:
+                    photo = images(product=post,image = i.cleaned_data['image'])
+                    photo.save()
+                except:
+                    break
+
 
         return redirect(post.get_url)
     
     contex = {
         'form':form,
         
-        'phone':phoneformod
+        'phone':phoneformod,
+        'post': post,
+        'image': imageformvar
     }
 
-    return render(request,'phoneadd.html',contex)
+    return render(request,'post_update.html',contex)
     
    
 def post_delete(request, id):

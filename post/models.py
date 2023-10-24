@@ -73,7 +73,7 @@ class Product(models.Model):
         return reverse('detail', kwargs={'id':self.id})
     
 class images(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images_set')
     image = models.ImageField(verbose_name='shekli',upload_to='product/')
 
     def __str__(self):

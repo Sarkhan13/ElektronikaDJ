@@ -18,4 +18,5 @@ urlpatterns = [
     path('register/',register, name='register'),
     path('post/search', searching, name='search'),
     path('profile/<str:username>', profile, name='profile'),
+    path('logout/', logoutpage, name='logout'),
 ]

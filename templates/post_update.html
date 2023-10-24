@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main %}
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col">
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags == 'error' %}
+            <div class="alert alert-danger">
+                <strong>{{ message }}</strong>
+            </div>
+            {% elif message.tags == 'success' %}
+            <div class="alert alert-primary">
+                <strong>{{ message }}</strong>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            {% load crispy_forms_tags %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                {{ phone|crispy }}
+                
+                {% for image in post.images_set.all %}
+                <label for="image_{{ image.id }}">Image:</label>
+                <input type="file" name="image_{{ image.id }}" id="image_{{ image.id }}"><br>
+
+                <img src="{{ image.image.url }}" alt="" style="width: 100px; height: 100px; object-fit: contain;"><br>
+
+                {% endfor %}
+
+                {{ image|crispy }}
+                <input type="submit" value="Gonder">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
