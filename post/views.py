@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import login,authenticate,logout
+from django.core.paginator import Paginator
 
 
 def logoutpage(request):
@@ -19,6 +20,10 @@ from django.db.models import Q
 
 def searching(request):
     product = Product.objects.all()
+
+   
+
+
     searchdata = request.GET.get('query')
     price_bet = request.GET.get('price_between')
 
@@ -44,10 +49,25 @@ def searching(request):
         elif price_bet == 'max500':
             product = product.filter(Q(price__gte=400) & Q(price__lte = 500))
 
+    
+    selected_colors = request.GET.get('colors')
+
+
+    if selected_colors:
+        product = product.filter(color__in=selected_colors)
+
+        
+    product_paginat = Paginator(product, 4)
+
+    page_number = request.GET.get('page')
+
+    pages = product_paginat.get_page(page_number)
+
 
     contex = {
         'product':product,
-        'search': searchdata
+        'search': searchdata,
+        'pages': pages,
     }
 
     return render(request, 'shop.html', contex)
@@ -287,7 +307,7 @@ def homepage(request):
     categories = Category.objects.all()
     product = Product.objects.all().order_by('-views')
     phonecount = Product.objects.filter(category__name='Telefonlar').count()
-
+    
     special = specialshop.objects.all()
 
     contex = {
@@ -297,6 +317,8 @@ def homepage(request):
         'categories':categories,
         'phonecount':phonecount,
         'special': special,
+       
+
     }
 
 

@@ -133,7 +133,7 @@
                             </div>
                         </div>
                     </div>
-                    {% for prod in product %}
+                    {% for prod in pages %}
 
                     <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                         <div class="product-item bg-light mb-4">
@@ -165,7 +165,12 @@
             </div>
                     </div>
                     {% endfor %}
-                    
+                    {% if pages.has_previous %}
+                        <a href="?page={{ pages.previous_page_number }}">previous</a>
+                    {% endif %}
+                    {% if pages.has_next %}
+                    <a href="?page={{ pages.next_page_number }}">next</a>
+                    {% endif %}
                     <div class="col-12">
                         <nav>
                           <ul class="pagination justify-content-center">
