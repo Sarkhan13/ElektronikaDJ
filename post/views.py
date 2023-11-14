@@ -50,11 +50,11 @@ def searching(request):
             product = product.filter(Q(price__gte=400) & Q(price__lte = 500))
 
     
-    selected_colors = request.GET.get('colors')
+    # selected_colors = request.GET.get('colors')
 
 
-    if selected_colors:
-        product = product.filter(color__in=selected_colors)
+    # if selected_colors:
+    #     product = product.filter(color__in=selected_colors)
 
         
     product_paginat = Paginator(product, 4)
